@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Data Karyawan</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Data Karyawan</h1>
+
+        <!-- Form Input -->
+        <form id="employeeForm">
+            <div class="form-group">
+                <label for="employeeName">Nama:</label>
+                <input type="text" class="form-control" id="employeeName" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">Jenis Kelamin:</label>
+                <select class="form-control" id="gender" required>
+                    <option value="">Pilih Jenis Kelamin</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Tambah</button>
+        </form>
+
+        <!-- Table Data -->
+        <h2 class="mt-4">Daftar Karyawan</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nama</th>
+                    <th>Jenis Kelamin</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+                <!-- Data Karyawan Akan Ditambahkan di Sini -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let employeeData = [];
+        let editIndex = null;
+
+        const form = document.getElementById("employeeForm");
+        const tableBody = document.getElementById("employeeTableBody");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById("employeeName").value.trim();
+            const gender = document.getElementById("gender").value;
+
+            if (editIndex !== null) {
+                // Update Data
+                employeeData[editIndex] = { name, gender };
+                editIndex = null;
+                document.querySelector("button[type='submit']").textContent = "Tambah";
+            } else {
+                // Tambah Data
+                employeeData.push({ name, gender });
+            }
+
+            form.reset();
+            renderTable();
+        });
+
+        function renderTable() {
+            tableBody.innerHTML = "";
+            employeeData.forEach((employee, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${employee.name}</td>
+                    <td>${employee.gender}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editEmployee(${index})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${index})">Hapus</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function editEmployee(index) {
+            const employee = employeeData[index];
+            document.getElementById("employeeName").value = employee.name;
+            document.getElementById("gender").value = employee.gender;
+            editIndex = index;
+            document.querySelector("button[type='submit']").textContent = "Update";
+        }
+
+        function deleteEmployee(index) {
+            employeeData.splice(index, 1);
+            renderTable();
+        }
+    </script>
+</body>
+
+</html>
